@@ -1,0 +1,40 @@
+{
+  "personal": {
+    "phone": "+7-999-123-45-67",
+    "emergency_contact": {
+      "name": "Иван Иванов",
+      "phone": "+7-999-765-43-21",
+      "relation": "отец"
+    },
+    "birth_date": "1995-03-15",
+    "skills": [
+      "3D-моделирование",
+      "Электроника",
+      "Программирование"
+    ]
+  },
+  "professional": {
+    "organization": "ИТМО Университет",
+    "position": "Студент",
+    "student_id": "123456"
+  },
+  "preferences": {
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "language": "ru",
+    "theme": "dark"
+  },
+  "statistics": {
+    "total_bookings": 47,
+    "completed_projects": 23,
+    "favorite_resources": [
+      5,
+      12,
+      8
+    ],
+    "avg_booking_duration_hours": 3.5
+  }
+}

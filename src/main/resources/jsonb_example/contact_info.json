@@ -1,0 +1,37 @@
+{
+  "company": {
+    "legal_name": "ООО \"3Д Материалы\"",
+    "tax_id": "1234567890",
+    "legal_address": "г. Санкт-Петербург, ул. Промышленная, 15"
+  },
+  "contacts": [
+    {
+      "type": "sales_manager",
+      "name": "Иванова Мария Петровна",
+      "phone": "+7-911-123-45-67",
+      "email": "sales@3dmaterials.ru"
+    },
+    {
+      "type": "technical_support",
+      "name": "Петров Алексей Сергеевич",
+      "phone": "+7-911-765-43-21",
+      "email": "support@3dmaterials.ru"
+    }
+  ],
+  "shipping": {
+    "delivery_methods": [
+      "courier",
+      "pickup"
+    ],
+    "warehouse_address": "г. Санкт-Петербург, пр. Науки, 25",
+    "delivery_notes": "Самовывоз с 9:00 до 18:00"
+  },
+  "payment": {
+    "payment_methods": [
+      "bank_transfer",
+      "card"
+    ],
+    "terms": "30 дней",
+    "currency": "RUB"
+  }
+}

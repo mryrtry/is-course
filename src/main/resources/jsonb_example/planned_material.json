@@ -1,0 +1,37 @@
+{
+  "project_info": {
+    "name": "Корпус для IoT устройства",
+    "purpose": "учебный проект",
+    "files": [
+      "case_v2.stl",
+      "lid_v2.stl"
+    ]
+  },
+  "materials_breakdown": [
+    {
+      "material_type": "PLA",
+      "color": "black",
+      "estimated_weight_grams": 145,
+      "purpose": "основной корпус"
+    },
+    {
+      "material_type": "PETG",
+      "color": "transparent",
+      "estimated_weight_grams": 25,
+      "purpose": "смотровое окно"
+    }
+  ],
+  "post_processing": {
+    "supports_required": true,
+    "support_material": "PLA",
+    "finishing": [
+      "sanding",
+      "priming"
+    ]
+  },
+  "time_estimates": {
+    "printing_time_hours": 8.5,
+    "post_processing_hours": 1.5,
+    "total_estimated_hours": 10
+  }
+}'

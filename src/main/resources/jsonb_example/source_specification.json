@@ -1,0 +1,42 @@
+{
+  "general": {
+    "manufacturer": "Thunder Laser",
+    "model": "Nova 35",
+    "laser_type": "CO2"
+  },
+  "technical": {
+    "work_area": {
+      "width": 900,
+      "height": 600,
+      "unit": "mm"
+    },
+    "laser": {
+      "power": 100,
+      "unit": "W",
+      "wavelength": 10640
+    },
+    "cooling": "water",
+    "exhaust_required": true,
+    "supported_materials": [
+      "acrylic",
+      "wood",
+      "leather",
+      "fabric"
+    ]
+  },
+  "safety": {
+    "interlock_required": true,
+    "protective_glasses": "OD6+",
+    "ventilation_required": true,
+    "fire_suppression": "automatic"
+  },
+  "software": {
+    "supported_formats": [
+      "dxf",
+      "svg",
+      "ai",
+      "pdf"
+    ],
+    "control_software": "RDWorks"
+  }
+}

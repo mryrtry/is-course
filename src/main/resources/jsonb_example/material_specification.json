@@ -1,0 +1,41 @@
+{
+  "physical_properties": {
+    "diameter": 1.75,
+    "tolerance": 0.03,
+    "color": "black",
+    "weight_per_spool": 1000
+  },
+  "printing_parameters": {
+    "nozzle_temperature": {
+      "min": 190,
+      "max": 220,
+      "optimal": 205
+    },
+    "bed_temperature": {
+      "min": 0,
+      "max": 60,
+      "optimal": 50
+    },
+    "print_speed": {
+      "min": 30,
+      "max": 80,
+      "optimal": 50
+    }
+  },
+  "material_properties": {
+    "material_type": "thermoplastic",
+    "density": 1.24,
+    "tensile_strength": 60,
+    "flexural_modulus": 3500
+  },
+  "storage": {
+    "moisture_sensitive": true,
+    "recommended_storage": "vacuum_bag",
+    "shelf_life_months": 24
+  },
+  "safety": {
+    "msds_required": true,
+    "ventilation": "recommended",
+    "fume_hazard": "low"
+  }
+}
