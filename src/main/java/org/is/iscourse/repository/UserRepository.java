@@ -35,10 +35,23 @@ public class UserRepository {
 
     public Optional<User> findByEmail(String email) {
         String jpql = "SELECT u FROM User u WHERE u.email = :email";
-        
+
         try {
             User user = entityManager.createQuery(jpql, User.class)
                     .setParameter("email", email)
+                    .getSingleResult();
+            return Optional.of(user);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<User> findByUsername(String username) {
+        String jpql = "SELECT u FROM User u WHERE u.username = :username";
+
+        try {
+            User user = entityManager.createQuery(jpql, User.class)
+                    .setParameter("username", username)
                     .getSingleResult();
             return Optional.of(user);
         } catch (NoResultException e) {
