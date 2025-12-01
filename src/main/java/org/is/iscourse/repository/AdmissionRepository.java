@@ -63,17 +63,16 @@ public class AdmissionRepository {
     }
     
     public boolean hasActiveAdmission(Long userId, Long resourceId) {
-        String jpql = """
-            SELECT COUNT(a) > 0 FROM Admission a 
-            WHERE a.user.userId = :userId 
-            AND a.resourceId = :resourceId 
-            AND a.status = 'active' 
-            AND (a.expiresAt IS NULL OR a.expiresAt > CURRENT_TIMESTAMP)
+        String nativeQuery = """
+            SELECT fab.check_user_has_active_admission(:userId, :resourceId)
             """;
-        return entityManager.createQuery(jpql, Boolean.class)
+        
+        Boolean result = (Boolean) entityManager.createNativeQuery(nativeQuery)
                 .setParameter("userId", userId)
                 .setParameter("resourceId", resourceId)
                 .getSingleResult();
+        
+        return Boolean.TRUE.equals(result);
     }
 }
 

@@ -11,7 +11,6 @@ public class AdmissionDto {
     private String status;
     private String notes;
     
-    // Конструкторы
     public AdmissionDto() {}
     
     public AdmissionDto(Long userId, Long resourceId, String level) {
@@ -20,8 +19,7 @@ public class AdmissionDto {
         this.level = level;
         this.status = "active";
     }
-    
-    // Геттеры и сеттеры
+
     public Long getUserId() { return userId; }
     public void setUserId(Long userId) { this.userId = userId; }
     

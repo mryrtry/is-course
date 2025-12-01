@@ -31,7 +31,6 @@ public class AdmissionService {
     private UserRepository userRepository;
     
     public Admission grantAdmission(AdmissionDto admissionDto) {
-        // Проверяем уникальность (user_id, resource_id)
         if (admissionRepository.findByUserAndResource(admissionDto.getUserId(), admissionDto.getResourceId()).isPresent()) {
             throw new RuntimeException("Admission already exists for this user and resource");
         }
