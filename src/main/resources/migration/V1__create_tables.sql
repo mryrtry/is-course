@@ -1,5 +1,4 @@
 CREATE SCHEMA IF NOT EXISTS fab;
-SET search_path TO fab, public;
 
 -- -----------------------
 -- Основные сущности
