@@ -1,0 +1,420 @@
+{
+  "info": {
+    "name": "IS Course Full API Flow",
+    "description": "End-to-end Postman collection covering authentication and all domain endpoints with linked test data.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "authToken", "value": "" },
+    { "key": "userId", "value": "1" },
+    { "key": "resourceId", "value": "1" },
+    { "key": "materialId", "value": "1" },
+    { "key": "supplierId", "value": "1" },
+    { "key": "bookingId", "value": "1" },
+    { "key": "admissionId", "value": "1" },
+    { "key": "maintenanceId", "value": "1" },
+    { "key": "incidentId", "value": "1" },
+    { "key": "inductionId", "value": "1" },
+    { "key": "attemptId", "value": "1" },
+    { "key": "topicId", "value": "1" },
+    { "key": "topicVersionId", "value": "1" },
+    { "key": "purchaseRequestId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Public",
+      "item": [
+        {
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.userId) { pm.collectionVariables.set('userId', json.userId); }",
+                  "pm.test('User created', function () { pm.expect(json.userId).to.exist; });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/users/register", "host": ["{{baseUrl}}"], "path": ["api", "users", "register"] },
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"demo\",\n  \"email\": \"demo@example.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"Demo User\"\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Login and Save Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('authToken', json.token);",
+                  "pm.test('JWT issued', function () { pm.expect(json.token).to.exist; });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"demo\",\n  \"password\": \"password123\"\n}" }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Roles & Users",
+      "item": [
+        {
+          "name": "List All Roles",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "url": { "raw": "{{baseUrl}}/api/roles", "host": ["{{baseUrl}}"], "path": ["api", "roles"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Role to User",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/roles/assign", "host": ["{{baseUrl}}"], "path": ["api", "roles", "assign"] },
+            "body": { "mode": "raw", "raw": "{\n  \"userId\": {{userId}},\n  \"roleId\": 1,\n  \"assignedBy\": {{userId}}\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Role from User",
+          "request": {
+            "method": "DELETE",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/roles/remove", "host": ["{{baseUrl}}"], "path": ["api", "roles", "remove"] },
+            "body": { "mode": "raw", "raw": "{\n  \"userId\": {{userId}},\n  \"roleId\": 1\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Roles",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "url": { "raw": "{{baseUrl}}/api/roles/user/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "roles", "user", "{{userId}}"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Suppliers & Materials",
+      "item": [
+        {
+          "name": "Create Supplier",
+          "event": [ { "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.supplierId) { pm.collectionVariables.set('supplierId', json.supplierId); }"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/suppliers", "host": ["{{baseUrl}}"], "path": ["api", "suppliers"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"ACME Industrial\",\n  \"contactInfo\": \"supply@acme.test\",\n  \"leadTimeDays\": 5\n}" }
+          },
+          "response": []
+        },
+        { "name": "List Suppliers", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/suppliers", "host": ["{{baseUrl}}"], "path": ["api", "suppliers"] } }, "response": [] },
+        { "name": "Get Supplier by ID", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/suppliers/{{supplierId}}", "host": ["{{baseUrl}}"], "path": ["api", "suppliers", "{{supplierId}}"] } }, "response": [] },
+        {
+          "name": "Create Material",
+          "event": [ { "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.materialId) { pm.collectionVariables.set('materialId', json.materialId); }"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/materials", "host": ["{{baseUrl}}"], "path": ["api", "materials"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Cutting Fluid\",\n  \"category\": \"consumable\",\n  \"specifications\": \"ISO 123 compliant\",\n  \"unit\": \"liters\",\n  \"unitCost\": 12.50,\n  \"stockQty\": 50,\n  \"minStockThreshold\": 10\n}" }
+          },
+          "response": []
+        },
+        { "name": "List Materials", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/materials", "host": ["{{baseUrl}}"], "path": ["api", "materials"] } }, "response": [] },
+        { "name": "Get Material by ID", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/materials/{{materialId}}", "host": ["{{baseUrl}}"], "path": ["api", "materials", "{{materialId}}"] } }, "response": [] },
+        { "name": "Get Materials by Category", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/materials/category/consumable", "host": ["{{baseUrl}}"], "path": ["api", "materials", "category", "consumable"] } }, "response": [] },
+        {
+          "name": "Update Material",
+          "request": {
+            "method": "PUT",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/materials/{{materialId}}", "host": ["{{baseUrl}}"], "path": ["api", "materials", "{{materialId}}"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Cutting Fluid\",\n  \"category\": \"consumable\",\n  \"specifications\": \"Updated spec\",\n  \"unit\": \"liters\",\n  \"unitCost\": 13.00,\n  \"stockQty\": 55,\n  \"minStockThreshold\": 10\n}" }
+          },
+          "response": []
+        },
+        { "name": "Update Material Stock", "request": { "method": "PUT", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/materials/{{materialId}}/stock?stockQty=60", "host": ["{{baseUrl}}"], "path": ["api", "materials", "{{materialId}}", "stock"], "query": [ { "key": "stockQty", "value": "60" } ] } }, "response": [] },
+        { "name": "Delete Material", "request": { "method": "DELETE", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/materials/{{materialId}}", "host": ["{{baseUrl}}"], "path": ["api", "materials", "{{materialId}}"] } } },
+        { "name": "List Low Stock Materials", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/materials/low-stock", "host": ["{{baseUrl}}"], "path": ["api", "materials", "low-stock"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "Resources",
+      "item": [
+        {
+          "name": "Create Resource",
+          "event": [ { "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.resourceId) { pm.collectionVariables.set('resourceId', json.resourceId); }"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/resources", "host": ["{{baseUrl}}"], "path": ["api", "resources"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"CNC Mill A\",\n  \"type\": \"machine\",\n  \"serialNumber\": \"CNC-001\",\n  \"model\": \"Haas VF-2\",\n  \"technicalSpecs\": \"{\\\"spindle\\\": \\\"10k RPM\\\"}\",\n  \"status\": \"operational\",\n  \"usageCostPerHour\": 120.00\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Resource",
+          "request": {
+            "method": "PUT",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/resources/{{resourceId}}", "host": ["{{baseUrl}}"], "path": ["api", "resources", "{{resourceId}}"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"CNC Mill A\",\n  \"type\": \"machine\",\n  \"serialNumber\": \"CNC-001\",\n  \"model\": \"Haas VF-2\",\n  \"technicalSpecs\": \"{\\\"spindle\\\": \\\"12k RPM\\\"}\",\n  \"status\": \"maintenance\",\n  \"usageCostPerHour\": 130.00\n}" }
+          },
+          "response": []
+        },
+        { "name": "List Resources", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/resources", "host": ["{{baseUrl}}"], "path": ["api", "resources"] } }, "response": [] },
+        { "name": "Get Resource by ID", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/resources/{{resourceId}}", "host": ["{{baseUrl}}"], "path": ["api", "resources", "{{resourceId}}"] } }, "response": [] },
+        { "name": "Get Resources by Type", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/resources/type/machine", "host": ["{{baseUrl}}"], "path": ["api", "resources", "type", "machine"] } }, "response": [] },
+        { "name": "Get Resources by Status", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/resources/status/operational", "host": ["{{baseUrl}}"], "path": ["api", "resources", "status", "operational"] } }, "response": [] },
+        { "name": "Delete Resource", "request": { "method": "DELETE", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/resources/{{resourceId}}", "host": ["{{baseUrl}}"], "path": ["api", "resources", "{{resourceId}}"] } } }
+      ]
+    },
+    {
+      "name": "Topics & Versions",
+      "item": [
+        {
+          "name": "List Published Topics",
+          "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/topics", "host": ["{{baseUrl}}"], "path": ["api", "topics"] } }, "response": [] },
+        {
+          "name": "Create Topic",
+          "event": [ { "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.topicId) { pm.collectionVariables.set('topicId', json.topicId); }"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/topics", "host": ["{{baseUrl}}"], "path": ["api", "topics"] },
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Safety checklist\",\n  \"body\": \"Base content for safety checklist.\",\n  \"authorId\": {{userId}}\n}" }
+          },
+          "response": []
+        },
+        { "name": "Get Topic by ID", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/topics/{{topicId}}", "host": ["{{baseUrl}}"], "path": ["api", "topics", "{{topicId}}"] } }, "response": [] },
+        { "name": "Get Topic with Versions", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/topics/{{topicId}}/with-versions", "host": ["{{baseUrl}}"], "path": ["api", "topics", "{{topicId}}", "with-versions"] } }, "response": [] },
+        { "name": "Search Topics", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/topics/search?query=safety", "host": ["{{baseUrl}}"], "path": ["api", "topics", "search"], "query": [ { "key": "query", "value": "safety" } ] } }, "response": [] },
+        { "name": "Get Topics by Author", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/topics/author/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "topics", "author", "{{userId}}"] } }, "response": [] },
+        {
+          "name": "Update Topic",
+          "request": {
+            "method": "PUT",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/topics/{{topicId}}", "host": ["{{baseUrl}}"], "path": ["api", "topics", "{{topicId}}"] },
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Safety checklist v2\",\n  \"body\": \"Updated checklist body\",\n  \"authorId\": {{userId}}\n}" }
+          },
+          "response": []
+        },
+        { "name": "Delete Topic", "request": { "method": "DELETE", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/topics/{{topicId}}", "host": ["{{baseUrl}}"], "path": ["api", "topics", "{{topicId}}"] } } },
+        {
+          "name": "List Topic Versions",
+          "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/topics/{{topicId}}/versions", "host": ["{{baseUrl}}"], "path": ["api", "topics", "{{topicId}}", "versions"] } }, "response": [] }
+        ,
+        {
+          "name": "Create Topic Version",
+          "event": [ { "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.versionId) { pm.collectionVariables.set('topicVersionId', json.versionId); }"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/topics/{{topicId}}/versions", "host": ["{{baseUrl}}"], "path": ["api", "topics", "{{topicId}}", "versions"] },
+            "body": { "mode": "raw", "raw": "{\n  \"content\": \"Expanded checklist with steps and images.\",\n  \"createdBy\": {{userId}}\n}" }
+          },
+          "response": []
+        },
+        { "name": "Get Version by ID", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/topic-versions/{{topicVersionId}}", "host": ["{{baseUrl}}"], "path": ["api", "topic-versions", "{{topicVersionId}}"] } }, "response": [] },
+        { "name": "Get Latest Version for Topic", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/topic-versions/topic/{{topicId}}/latest", "host": ["{{baseUrl}}"], "path": ["api", "topic-versions", "topic", "{{topicId}}", "latest"] } }, "response": [] },
+        { "name": "Count Versions for Topic", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/topic-versions/topic/{{topicId}}/count", "host": ["{{baseUrl}}"], "path": ["api", "topic-versions", "topic", "{{topicId}}", "count"] } }, "response": [] },
+        { "name": "Get Versions by Topic", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/topic-versions/topic/{{topicId}}", "host": ["{{baseUrl}}"], "path": ["api", "topic-versions", "topic", "{{topicId}}"] } }, "response": [] },
+        { "name": "Get Versions by User", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/topic-versions/user/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "topic-versions", "user", "{{userId}}"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "Inductions",
+      "item": [
+        {
+          "name": "Create Induction",
+          "event": [ { "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.inductionId) { pm.collectionVariables.set('inductionId', json.inductionId); }"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/inductions", "host": ["{{baseUrl}}"], "path": ["api", "inductions"] },
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"CNC Intro\",\n  \"description\": \"Initial CNC safety and setup training.\",\n  \"version\": \"v1\",\n  \"theoryContentLink\": \"https://example.com/cnc-intro.pdf\",\n  \"createdBy\": {{userId}},\n  \"durationHours\": 2.5\n}" }
+          },
+          "response": []
+        },
+        { "name": "List Inductions", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/inductions", "host": ["{{baseUrl}}"], "path": ["api", "inductions"] } }, "response": [] },
+        { "name": "Get Induction by ID", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/inductions/{{inductionId}}", "host": ["{{baseUrl}}"], "path": ["api", "inductions", "{{inductionId}}"] } }, "response": [] },
+        {
+          "name": "Start Induction Attempt",
+          "event": [ { "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.attemptId) { pm.collectionVariables.set('attemptId', json.attemptId); }"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/attempts/start", "host": ["{{baseUrl}}"], "path": ["api", "attempts", "start"] },
+            "body": { "mode": "raw", "raw": "{\n  \"userId\": {{userId}},\n  \"inductionId\": {{inductionId}},\n  \"status\": \"in_progress\"\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Complete Induction Attempt",
+          "request": {
+            "method": "PUT",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "url": { "raw": "{{baseUrl}}/api/attempts/{{attemptId}}/complete?score=95&signedBy={{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "attempts", "{{attemptId}}", "complete"], "query": [ { "key": "score", "value": "95" }, { "key": "signedBy", "value": "{{userId}}" } ] }
+          },
+          "response": []
+        },
+        { "name": "Get Attempts by User", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/attempts/user/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "attempts", "user", "{{userId}}"] } }, "response": [] },
+        { "name": "Get Attempts by Induction", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/attempts/induction/{{inductionId}}", "host": ["{{baseUrl}}"], "path": ["api", "attempts", "induction", "{{inductionId}}"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "Admissions",
+      "item": [
+        {
+          "name": "Grant Admission",
+          "event": [ { "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.admissionId) { pm.collectionVariables.set('admissionId', json.admissionId); }"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/admissions/grant", "host": ["{{baseUrl}}"], "path": ["api", "admissions", "grant"] },
+            "body": { "mode": "raw", "raw": "{\n  \"userId\": {{userId}},\n  \"resourceId\": {{resourceId}},\n  \"level\": \"operator\",\n  \"grantedBy\": {{userId}},\n  \"notes\": \"Initial access granted after induction.\"\n}" }
+          },
+          "response": []
+        },
+        { "name": "Revoke Admission", "request": { "method": "PUT", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/admissions/{{admissionId}}/revoke", "host": ["{{baseUrl}}"], "path": ["api", "admissions", "{{admissionId}}", "revoke"] } } },
+        { "name": "Check Admission", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/admissions/check?userId={{userId}}&resourceId={{resourceId}}", "host": ["{{baseUrl}}"], "path": ["api", "admissions", "check"], "query": [ { "key": "userId", "value": "{{userId}}" }, { "key": "resourceId", "value": "{{resourceId}}" } ] } } },
+        { "name": "List User Admissions", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/admissions/user/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "admissions", "user", "{{userId}}"] } }, "response": [] },
+        { "name": "List Resource Admissions", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/admissions/resource/{{resourceId}}", "host": ["{{baseUrl}}"], "path": ["api", "admissions", "resource", "{{resourceId}}"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Create Booking",
+          "event": [ { "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.bookingId) { pm.collectionVariables.set('bookingId', json.bookingId); }"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/bookings", "host": ["{{baseUrl}}"], "path": ["api", "bookings"] },
+            "body": { "mode": "raw", "raw": "{\n  \"userId\": {{userId}},\n  \"resourceId\": {{resourceId}},\n  \"purpose\": \"Prototype batch\",\n  \"startTime\": \"2024-06-01T09:00:00\",\n  \"endTime\": \"2024-06-01T11:00:00\",\n  \"materials\": [\n    { \"materialId\": {{materialId}}, \"plannedQty\": 2 }\n  ]\n}" }
+          },
+          "response": []
+        },
+        { "name": "List Bookings", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/bookings", "host": ["{{baseUrl}}"], "path": ["api", "bookings"] } }, "response": [] },
+        { "name": "Get Booking by ID", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/bookings/{{bookingId}}", "host": ["{{baseUrl}}"], "path": ["api", "bookings", "{{bookingId}}"] } }, "response": [] },
+        { "name": "Get Bookings by User", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/bookings/user/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "bookings", "user", "{{userId}}"] } }, "response": [] },
+        { "name": "Get Bookings by Resource", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/bookings/resource/{{resourceId}}", "host": ["{{baseUrl}}"], "path": ["api", "bookings", "resource", "{{resourceId}}"] } }, "response": [] },
+        { "name": "Check Resource Availability", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/bookings/availability?resourceId={{resourceId}}&startDate=2024-06-01T00:00:00&endDate=2024-06-02T00:00:00", "host": ["{{baseUrl}}"], "path": ["api", "bookings", "availability"], "query": [ { "key": "resourceId", "value": "{{resourceId}}" }, { "key": "startDate", "value": "2024-06-01T00:00:00" }, { "key": "endDate", "value": "2024-06-02T00:00:00" } ] } }, "response": [] },
+        { "name": "Get Booking Materials", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/bookings/{{bookingId}}/materials", "host": ["{{baseUrl}}"], "path": ["api", "bookings", "{{bookingId}}", "materials"] } }, "response": [] },
+        { "name": "Confirm Booking", "request": { "method": "PUT", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/bookings/{{bookingId}}/confirm", "host": ["{{baseUrl}}"], "path": ["api", "bookings", "{{bookingId}}", "confirm"] } }, "response": [] },
+        { "name": "Cancel Booking", "request": { "method": "PUT", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/bookings/{{bookingId}}/cancel", "host": ["{{baseUrl}}"], "path": ["api", "bookings", "{{bookingId}}", "cancel"] } }, "response": [] },
+        { "name": "Issue Materials to Booking", "request": { "method": "PUT", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/bookings/{{bookingId}}/issue-materials?materialId={{materialId}}&actualQty=1.5&issuedBy={{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "bookings", "{{bookingId}}", "issue-materials"], "query": [ { "key": "materialId", "value": "{{materialId}}" }, { "key": "actualQty", "value": "1.5" }, { "key": "issuedBy", "value": "{{userId}}" } ] } }, "response": [] },
+        { "name": "Delete Booking", "request": { "method": "DELETE", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/bookings/{{bookingId}}", "host": ["{{baseUrl}}"], "path": ["api", "bookings", "{{bookingId}}"] } } }
+      ]
+    },
+    {
+      "name": "Maintenance",
+      "item": [
+        {
+          "name": "Create Maintenance Record",
+          "event": [ { "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.maintenanceId) { pm.collectionVariables.set('maintenanceId', json.maintenanceId); }"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/maintenance", "host": ["{{baseUrl}}"], "path": ["api", "maintenance"] },
+            "body": { "mode": "raw", "raw": "{\n  \"resourceId\": {{resourceId}},\n  \"performedBy\": {{userId}},\n  \"workDescription\": \"Preventive lubrication and cleaning\",\n  \"hoursSpent\": 1.25,\n  \"usedMaterials\": [\n    { \"materialId\": {{materialId}}, \"qty\": 1, \"unitCost\": 12.50 }\n  ]\n}" }
+          },
+          "response": []
+        },
+        { "name": "Resource Maintenance History", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/maintenance/resource/{{resourceId}}", "host": ["{{baseUrl}}"], "path": ["api", "maintenance", "resource", "{{resourceId}}"] } }, "response": [] },
+        { "name": "User Maintenance History", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/maintenance/user/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "maintenance", "user", "{{userId}}"] } }, "response": [] },
+        { "name": "All Maintenance Records", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/maintenance", "host": ["{{baseUrl}}"], "path": ["api", "maintenance"] } }, "response": [] },
+        { "name": "Maintenance Used Materials", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/maintenance/{{maintenanceId}}/materials", "host": ["{{baseUrl}}"], "path": ["api", "maintenance", "{{maintenanceId}}", "materials"] } }, "response": [] },
+        { "name": "Get Maintenance Record", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/maintenance/{{maintenanceId}}", "host": ["{{baseUrl}}"], "path": ["api", "maintenance", "{{maintenanceId}}"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "Incidents",
+      "item": [
+        {
+          "name": "Report Incident",
+          "event": [ { "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.incidentId) { pm.collectionVariables.set('incidentId', json.incidentId); }"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/incidents", "host": ["{{baseUrl}}"], "path": ["api", "incidents"] },
+            "body": { "mode": "raw", "raw": "{\n  \"reportedBy\": {{userId}},\n  \"resourceId\": {{resourceId}},\n  \"type\": \"safety\",\n  \"description\": \"Minor coolant spill\",\n  \"severity\": \"low\"\n}" }
+          },
+          "response": []
+        },
+        { "name": "All Incidents", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/incidents", "host": ["{{baseUrl}}"], "path": ["api", "incidents"] } }, "response": [] },
+        { "name": "New Incidents", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/incidents/new", "host": ["{{baseUrl}}"], "path": ["api", "incidents", "new"] } }, "response": [] },
+        { "name": "Incidents Assigned To User", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/incidents/assigned-to/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "incidents", "assigned-to", "{{userId}}"] } }, "response": [] },
+        { "name": "Incidents by Resource", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/incidents/resource/{{resourceId}}", "host": ["{{baseUrl}}"], "path": ["api", "incidents", "resource", "{{resourceId}}"] } }, "response": [] },
+        { "name": "Incidents by Reporter", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/incidents/user/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "incidents", "user", "{{userId}}"] } }, "response": [] },
+        { "name": "Incident by ID", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/incidents/{{incidentId}}", "host": ["{{baseUrl}}"], "path": ["api", "incidents", "{{incidentId}}"] } }, "response": [] },
+        { "name": "Incidents by Status", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/incidents/status/new", "host": ["{{baseUrl}}"], "path": ["api", "incidents", "status", "new"] } }, "response": [] },
+        { "name": "Update Incident", "request": { "method": "PUT", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/api/incidents/{{incidentId}}", "host": ["{{baseUrl}}"], "path": ["api", "incidents", "{{incidentId}}"] }, "body": { "mode": "raw", "raw": "{\n  \"assignedTo\": {{userId}},\n  \"status\": \"in_progress\",\n  \"severity\": \"medium\",\n  \"resolutionNotes\": \"Team dispatched\"\n}" } }, "response": [] },
+        { "name": "Delete Incident", "request": { "method": "DELETE", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/incidents/{{incidentId}}", "host": ["{{baseUrl}}"], "path": ["api", "incidents", "{{incidentId}}"] } } }
+      ]
+    },
+    {
+      "name": "Purchase Requests",
+      "item": [
+        {
+          "name": "Create Purchase Request",
+          "event": [ { "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.prId || json.purchaseRequestId) { pm.collectionVariables.set('purchaseRequestId', json.prId || json.purchaseRequestId); }"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] },
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/purchase-requests", "host": ["{{baseUrl}}"], "path": ["api", "purchase-requests"] },
+            "body": { "mode": "raw", "raw": "{\n  \"createdBy\": {{userId}},\n  \"supplierId\": {{supplierId}},\n  \"expectedDelivery\": \"2024-06-15T12:00:00\",\n  \"notes\": \"Restock for summer demand\",\n  \"items\": [\n    { \"materialId\": {{materialId}}, \"requestedQty\": 20, \"price\": 10.75 }\n  ]\n}" }
+          },
+          "response": []
+        },
+        { "name": "Approve Purchase Request", "request": { "method": "PUT", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/purchase-requests/{{purchaseRequestId}}/approve", "host": ["{{baseUrl}}"], "path": ["api", "purchase-requests", "{{purchaseRequestId}}", "approve"] } }, "response": [] },
+        { "name": "Reject Purchase Request", "request": { "method": "PUT", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/purchase-requests/{{purchaseRequestId}}/reject?reason=Insufficient+budget", "host": ["{{baseUrl}}"], "path": ["api", "purchase-requests", "{{purchaseRequestId}}", "reject"], "query": [ { "key": "reason", "value": "Insufficient budget" } ] } }, "response": [] },
+        { "name": "Complete Purchase Request", "request": { "method": "PUT", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/purchase-requests/{{purchaseRequestId}}/complete", "host": ["{{baseUrl}}"], "path": ["api", "purchase-requests", "{{purchaseRequestId}}", "complete"] } }, "response": [] },
+        { "name": "Approve Purchase Request Item", "request": { "method": "PUT", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/purchase-requests/{{purchaseRequestId}}/approve-item?materialId={{materialId}}&approvedQty=18", "host": ["{{baseUrl}}"], "path": ["api", "purchase-requests", "{{purchaseRequestId}}", "approve-item"], "query": [ { "key": "materialId", "value": "{{materialId}}" }, { "key": "approvedQty", "value": "18" } ] } }, "response": [] },
+        { "name": "List Purchase Requests", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/purchase-requests", "host": ["{{baseUrl}}"], "path": ["api", "purchase-requests"] } }, "response": [] },
+        { "name": "Purchase Requests by Status", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/purchase-requests/status/pending", "host": ["{{baseUrl}}"], "path": ["api", "purchase-requests", "status", "pending"] } }, "response": [] },
+        { "name": "Purchase Request Items", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{authToken}}", "type": "string" } ] }, "url": { "raw": "{{baseUrl}}/api/purchase-requests/{{purchaseRequestId}}/items", "host": ["{{baseUrl}}"], "path": ["api", "purchase-requests", "{{purchaseRequestId}}", "items"] } }, "response": [] }
+      ]
+    }
+  ]
+}
